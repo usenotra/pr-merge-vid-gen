@@ -1,5 +1,6 @@
 "use client"
 
+import { LoaderCircleIcon } from "lucide-react"
 import { type FormEvent, useState } from "react"
 import { useQueryState } from "nuqs"
 import { toast } from "sonner"
@@ -8,24 +9,36 @@ import { GitHubMark } from "@/components/github-mark"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { SwapLabel } from "@/components/swap-label"
+import { CTA_BUTTON_CLASS } from "@/constants/cta"
 import { DEFAULT_REPO_INPUT } from "@/constants/pr-merge-video"
 import { useGithubStatus } from "@/hooks/use-github-status"
 import { buildGithubConnectHref } from "@/lib/github-connection"
 import { parseRepoInput } from "@/lib/parse-repo"
+import { useRepoLoading } from "@/lib/repo-loading-store"
+import { cn } from "@/lib/utils"
 
 export function RepoForm() {
   const [repoParam, setRepoParam] = useQueryState("repo")
   const [value, setValue] = useState(repoParam ?? DEFAULT_REPO_INPUT)
   const { connected, oauthConfigured, loaded, login } = useGithubStatus()
+  const isLoading = useRepoLoading()
+  const needsConnect = loaded && oauthConfigured && !connected
+  const buttonState = isLoading
+    ? "loading"
+    : needsConnect
+      ? "connect"
+      : "analyze"
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const parsed = parseRepoInput(value)
     if (!parsed) {
-      toast.error("Enter a repo as owner/name or a GitHub URL.")
+      toast.error("Enter a repo as owner/name or paste a GitHub URL.")
       return
     }
     const repoId = `${parsed.owner}/${parsed.repo}`.toLowerCase()
+    setValue(`${parsed.owner}/${parsed.repo}`)
     if (!connected) {
       if (oauthConfigured) {
         window.location.assign(buildGithubConnectHref(repoId))
@@ -58,7 +71,7 @@ export function RepoForm() {
               className="h-11 rounded-full border-brand-ink/10 bg-white/80 pr-4 pl-10 text-base shadow-[0_0.0625rem_0.125rem_#28282814] backdrop-blur-[0.15rem] md:text-base dark:border-white/10 dark:bg-white/10"
               id="repo"
               onChange={(event) => setValue(event.target.value)}
-              placeholder="vercel/next.js"
+              placeholder="vercel/next.js or https://github.com/vercel/next.js"
               spellCheck={false}
               value={value}
             />
@@ -66,14 +79,40 @@ export function RepoForm() {
           </div>
         </div>
         <Button
-          className="cta-gradient-primary h-11 shrink-0 rounded-full border-0 px-6 font-display text-[0.9375rem] font-medium tracking-[-0.01em] hover:bg-transparent active:scale-[0.97]"
-          disabled={!loaded}
+          aria-busy={isLoading || undefined}
+          className={cn(CTA_BUTTON_CLASS, "shrink-0 px-6")}
+          disabled={!loaded || isLoading}
           size="lg"
           type="submit"
         >
-          {loaded && oauthConfigured && !connected
-            ? "Connect GitHub"
-            : "Analyze merges"}
+          <SwapLabel
+            sizers={[
+              "Analyze merges",
+              <>
+                <LoaderCircleIcon />
+                Analyzing…
+              </>,
+              <>
+                <GitHubMark className="size-4" />
+                Connect GitHub
+              </>,
+            ]}
+            swapKey={buttonState}
+          >
+            {buttonState === "loading" ? (
+              <>
+                <LoaderCircleIcon className="animate-spin" />
+                Analyzing…
+              </>
+            ) : buttonState === "connect" ? (
+              <>
+                <GitHubMark className="size-4" />
+                Connect GitHub
+              </>
+            ) : (
+              "Analyze merges"
+            )}
+          </SwapLabel>
         </Button>
       </form>
       {login ? (

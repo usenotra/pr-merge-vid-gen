@@ -1,13 +1,18 @@
 import * as z from "zod"
 
-import { MAX_SELECTED_PEOPLE } from "@/constants/pr-merge-video"
+import {
+  MAX_SELECTED_PEOPLE,
+  PR_MERGE_PERIODS,
+} from "@/constants/pr-merge-video"
 import {
   githubAvatarUrlSchema,
   githubOwnerSlugSchema,
   githubRepoSlugSchema,
 } from "@/schemas/github"
 
-const prMergePeriodSchema = z.union([z.literal(3), z.literal(7), z.literal(14)])
+const prMergePeriodSchema = z.union(
+  PR_MERGE_PERIODS.map((period) => z.literal(period))
+)
 
 export const prMergeRepoQuerySchema = z.object({
   owner: githubOwnerSlugSchema,

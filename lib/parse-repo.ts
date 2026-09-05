@@ -3,8 +3,13 @@ const SLUG_PART = /^[\w.-]+$/
 const GIT_SUFFIX = /\.git$/i
 const HAS_SCHEME = /^https?:\/\//i
 const CONTAINS_GITHUB_PATH = /(^|\.)github\.com\//i
+const SSH_GITHUB = /^(?:ssh:\/\/)?git@github\.com[:/]([^/\s]+)\/([^/\s]+)$/i
 
 function extractOwnerRepo(raw: string): string | null {
+  const ssh = SSH_GITHUB.exec(raw)
+  if (ssh) {
+    return `${ssh[1]}/${ssh[2]}`
+  }
   if (!(HAS_SCHEME.test(raw) || CONTAINS_GITHUB_PATH.test(raw))) {
     return raw
   }

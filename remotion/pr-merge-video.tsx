@@ -1,5 +1,7 @@
-import { AbsoluteFill } from "remotion"
+import { useEffect, useState } from "react"
+import { AbsoluteFill, useDelayRender } from "remotion"
 
+import { formatPeriodPhrase } from "@/lib/format-period"
 import type { PrMergeVideoInputProps } from "@/types/pr-merge-video"
 
 import {
@@ -13,14 +15,35 @@ import { ensurePrMergeFonts } from "./load-fonts"
 import { MergeRow } from "./merge-row"
 import { VideoNotraMark } from "./notra-mark"
 
-ensurePrMergeFonts()
-
 export function PrMergeVideo({
   owner,
   repo,
   days,
   people,
 }: PrMergeVideoInputProps) {
+  const { delayRender, continueRender, cancelRender } = useDelayRender()
+  const [fontsReady, setFontsReady] = useState(false)
+  const [fontHandle] = useState(() => delayRender("Loading video fonts"))
+  useEffect(() => {
+    let active = true
+    ensurePrMergeFonts().then(
+      () => {
+        if (active) {
+          setFontsReady(true)
+          continueRender(fontHandle)
+        }
+      },
+      (error) => {
+        if (active) cancelRender(error)
+      }
+    )
+    return () => {
+      active = false
+    }
+  }, [fontHandle, continueRender, cancelRender])
+
+  if (!fontsReady) return null
+
   return (
     <AbsoluteFill
       style={{
@@ -51,7 +74,7 @@ export function PrMergeVideo({
               lineHeight: 1.08,
             }}
           >
-            Pull requests merged in the past {days} days
+            Pull requests merged in {formatPeriodPhrase(days)}
           </div>
           <div
             style={{
@@ -59,6 +82,7 @@ export function PrMergeVideo({
               fontSize: 22,
               fontWeight: 500,
               marginTop: 14,
+              marginLeft: 2,
               letterSpacing: "-0.01em",
             }}
           >

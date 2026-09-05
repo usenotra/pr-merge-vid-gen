@@ -5,10 +5,22 @@ import { useTheme } from "next-themes"
 import { useSyncExternalStore } from "react"
 
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const subscribe = () => () => {}
 
-export function ThemeToggle() {
+function startThemeTransition(update: () => void) {
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches
+  if (reduceMotion || typeof document.startViewTransition !== "function") {
+    update()
+    return
+  }
+  document.startViewTransition(update)
+}
+
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = useSyncExternalStore(
     subscribe,
@@ -20,12 +32,30 @@ export function ThemeToggle() {
   return (
     <Button
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      className="rounded-full"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className={cn(
+        "group/theme relative rounded-full active:translate-y-0 [&_svg]:transition-[transform,opacity] [&_svg]:duration-300 [&_svg]:ease-[cubic-bezier(0.22,1,0.36,1)]",
+        className
+      )}
+      onClick={() =>
+        startThemeTransition(() => setTheme(isDark ? "light" : "dark"))
+      }
       size="icon"
       variant="ghost"
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
+      <SunIcon
+        className={
+          isDark
+            ? "absolute scale-100 rotate-0 opacity-100"
+            : "absolute scale-50 -rotate-90 opacity-0"
+        }
+      />
+      <MoonIcon
+        className={
+          isDark
+            ? "absolute scale-50 rotate-90 opacity-0"
+            : "absolute scale-100 rotate-0 opacity-100"
+        }
+      />
     </Button>
   )
 }

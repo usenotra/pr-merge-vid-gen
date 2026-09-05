@@ -9,6 +9,7 @@ import {
   selectComposition,
 } from "@remotion/renderer"
 
+import { VIDEO_CRF, VIDEO_X264_PRESET } from "@/constants/render"
 import { webpackOverride } from "@/remotion/webpack-override"
 import type { PrMergeVideoInputProps } from "@/types/pr-merge-video"
 
@@ -66,6 +67,8 @@ export async function renderPrMergeVideo(
         composition,
         serveUrl,
         codec: "h264",
+        crf: VIDEO_CRF,
+        x264Preset: VIDEO_X264_PRESET,
         outputLocation,
         inputProps,
       })

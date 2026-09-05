@@ -1,4 +1,4 @@
-export const PR_MERGE_PERIODS = [3, 7, 14] as const
+export const PR_MERGE_PERIODS = [1, 2, 3, 7, 14, 30] as const
 export const DEFAULT_PR_MERGE_PERIOD_DAYS = 7
 export const DEFAULT_SELECTED_PEOPLE = 5
 export const MAX_SELECTED_PEOPLE = 6

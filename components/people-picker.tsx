@@ -2,7 +2,9 @@
 
 import { CheckIcon } from "lucide-react"
 import Image from "next/image"
+import { useRef } from "react"
 
+import { useScrollOverflow } from "@/hooks/use-scroll-overflow"
 import { cn } from "@/lib/utils"
 import type { PrMergePerson } from "@/types/pr-merge-video"
 
@@ -21,6 +23,9 @@ export function PeoplePicker({
   truncated: boolean
   onToggle: (login: string) => void
 }) {
+  const listRef = useRef<HTMLDivElement | null>(null)
+  const hasMoreBelow = useScrollOverflow(listRef)
+
   return (
     <section className="flex min-h-0 w-full flex-1 flex-col gap-2">
       <div className="flex shrink-0 items-end justify-between gap-3">
@@ -36,53 +41,69 @@ export function PeoplePicker({
           {selectedLogins.length}/{maxSelected}
         </p>
       </div>
-      <div className="-mx-1 grid min-h-0 flex-1 grid-cols-1 content-start gap-1.5 overflow-y-auto px-1 pb-1">
-        {people.map((person) => {
-          const selected = selectedLogins.includes(person.login)
-          return (
-            <button
-              aria-pressed={selected}
-              className={cn(
-                "flex cursor-pointer items-center gap-2.5 rounded-lg border p-2 text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.96]",
-                selected
-                  ? "border-primary/30 bg-brand-wash"
-                  : "border-border bg-background hover:bg-muted/60"
-              )}
-              key={person.login}
-              onClick={() => onToggle(person.login)}
-              type="button"
-            >
-              <Image
-                alt=""
-                className="size-8 rounded-full object-cover outline outline-black/10 dark:outline-white/10"
-                height={AVATAR_SIZE_PX}
-                src={person.avatarUrl}
-                width={AVATAR_SIZE_PX}
-              />
-              <span className="min-w-0 grow">
-                <span className="block truncate text-sm font-medium">
-                  {person.name || person.login}
-                </span>
-                <span className="block truncate text-xs text-muted-foreground">
-                  @{person.login} · {person.merges.toLocaleString("en-US")}{" "}
-                  {person.merges === 1 ? "merge" : "merges"}
-                </span>
-              </span>
-              <span
+      <div className="relative min-h-0 flex-1">
+        <div
+          className="-mx-1 grid h-full grid-cols-1 content-start gap-1.5 overflow-y-auto px-1 pb-1"
+          ref={listRef}
+        >
+          {people.map((person) => {
+            const selected = selectedLogins.includes(person.login)
+            return (
+              <button
+                aria-pressed={selected}
                 className={cn(
-                  "flex size-5 shrink-0 items-center justify-center rounded-full border",
+                  "flex cursor-pointer items-center gap-2.5 rounded-lg border p-2 text-left transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99]",
                   selected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-input"
+                    ? "border-primary/30 bg-brand-wash"
+                    : "border-border bg-background hover:bg-muted/60"
                 )}
+                key={person.login}
+                onClick={() => onToggle(person.login)}
+                type="button"
               >
-                {selected ? (
-                  <CheckIcon aria-hidden="true" className="size-3" />
-                ) : null}
-              </span>
-            </button>
-          )
-        })}
+                <Image
+                  alt=""
+                  className="size-8 rounded-full object-cover outline outline-black/10 dark:outline-white/10"
+                  height={AVATAR_SIZE_PX}
+                  src={person.avatarUrl}
+                  width={AVATAR_SIZE_PX}
+                />
+                <span className="min-w-0 grow">
+                  <span className="block truncate text-sm font-medium">
+                    {person.name || person.login}
+                  </span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    @{person.login} · {person.merges.toLocaleString("en-US")}{" "}
+                    {person.merges === 1 ? "merge" : "merges"}
+                  </span>
+                </span>
+                <span
+                  className={cn(
+                    "flex size-5 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    selected
+                      ? "scale-100 border-primary bg-primary text-primary-foreground opacity-100"
+                      : "scale-90 border-input opacity-70"
+                  )}
+                >
+                  <CheckIcon
+                    aria-hidden="true"
+                    className={cn(
+                      "size-3 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      selected ? "scale-100 opacity-100" : "scale-50 opacity-0"
+                    )}
+                  />
+                </span>
+              </button>
+            )
+          })}
+        </div>
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-background to-transparent transition-opacity duration-200",
+            hasMoreBelow ? "opacity-100" : "opacity-0"
+          )}
+        />
       </div>
       {truncated ? (
         <p className="text-xs text-pretty text-muted-foreground">

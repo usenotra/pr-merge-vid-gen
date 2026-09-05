@@ -1,3 +1,6 @@
+import { useMemo } from "react"
+
+import { fitVideoName } from "./fit-video-name"
 import { Img, useCurrentFrame, useVideoConfig } from "remotion"
 
 import type { PrMergeRowProps } from "@/types/pr-merge-video"
@@ -15,9 +18,7 @@ import {
   VIDEO_COLOR_INK,
   VIDEO_COLOR_LAVENDER,
   VIDEO_COLOR_MUTED,
-  VIDEO_COLOR_WASH,
   VIDEO_FONT_DISPLAY,
-  VIDEO_TRACK_HEIGHT,
 } from "./constants"
 
 export function MergeRow({
@@ -26,6 +27,10 @@ export function MergeRow({
   total,
   fontFamily,
 }: PrMergeRowProps) {
+  const displayName = useMemo(
+    () => fitVideoName(person.name || person.login),
+    [person.name, person.login]
+  )
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const rowHeight = Math.min(
@@ -64,13 +69,15 @@ export function MergeRow({
             fontSize: 34,
             fontWeight: 600,
             letterSpacing: "-0.04em",
-            lineHeight: 1.05,
+            lineHeight: 1.15,
             overflow: "hidden",
+            paddingBottom: "0.08em",
+            paddingRight: "0.08em",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
           }}
         >
-          {person.name || person.login}
+          {displayName}
         </div>
         <div
           style={{
@@ -89,33 +96,37 @@ export function MergeRow({
       <div
         style={{
           position: "absolute",
-          left: BALL_TRACK_LEFT,
-          width: BALL_TRACK_RIGHT - BALL_TRACK_LEFT,
-          top: centerY,
-          height: VIDEO_TRACK_HEIGHT,
-          borderRadius: VIDEO_TRACK_HEIGHT,
-          backgroundColor: VIDEO_COLOR_WASH,
-          transform: "translateY(-50%)",
-        }}
-      />
-
-      <div
-        style={{
-          position: "absolute",
           left: centerX,
           top: centerY,
-          width: diameter,
-          height: diameter,
+          width: diameter + 10,
+          height: diameter + 10,
           borderRadius: "50%",
           overflow: "hidden",
           transform: "translate(-50%, -50%)",
-          boxShadow: `0 0 0 4px ${VIDEO_COLOR_LAVENDER}, 0 0 0 5px ${VIDEO_COLOR_INK}1a`,
+          backgroundColor: `${VIDEO_COLOR_INK}1a`,
         }}
       >
-        <Img
-          src={person.avatarUrl}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        <div
+          style={{
+            position: "absolute",
+            inset: 1,
+            borderRadius: "50%",
+            backgroundColor: VIDEO_COLOR_LAVENDER,
+          }}
         />
+        <div
+          style={{
+            position: "absolute",
+            inset: 5,
+            borderRadius: "50%",
+            overflow: "hidden",
+          }}
+        >
+          <Img
+            src={person.avatarUrl}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
       </div>
     </div>
   )

@@ -3,14 +3,16 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 export function SiteHeader() {
   return (
-    <header className="flex shrink-0 items-center justify-between gap-4">
+    <header className="flex h-9 shrink-0 items-center justify-between gap-4">
       <a
         className="flex items-center gap-2.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        href="https://notra.ai"
+        href="https://usenotra.com"
         rel="noreferrer"
         target="_blank"
       >
-        <NotraMark className="size-7 shrink-0 text-brand-ink" />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-white p-1 shadow-[0_0_0_0.0625rem_#1E1E1E14]">
+          <NotraMark className="size-7 text-brand-ink" />
+        </span>
         <span className="font-display text-[1.0625rem] font-semibold tracking-[-0.03em] text-[#1e1e1e] dark:text-white">
           Notra
         </span>
@@ -22,7 +24,7 @@ export function SiteHeader() {
           PR merge video
         </span>
       </a>
-      <ThemeToggle />
+      <ThemeToggle className="-mr-2" />
     </header>
   )
 }

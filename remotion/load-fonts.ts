@@ -1,29 +1,34 @@
-import { loadFont } from "@remotion/fonts"
 import { staticFile } from "remotion"
 
-const INTER_WEIGHTS = ["400", "600"] as const
+let fontsPromise: Promise<void> | null = null
 
-let started = false
-
-export function ensurePrMergeFonts(): void {
-  if (started || typeof FontFace === "undefined") {
-    return
+export function ensurePrMergeFonts(): Promise<void> {
+  if (typeof FontFace === "undefined") return Promise.resolve()
+  if (!fontsPromise) {
+    const fonts = [
+      new FontFace("Inter", `url("${staticFile("fonts/inter-400.woff2")}")`, {
+        weight: "400",
+      }),
+      new FontFace("Inter", `url("${staticFile("fonts/inter-600.woff2")}")`, {
+        weight: "600",
+      }),
+      new FontFace(
+        "Satoshi",
+        `url("${staticFile("fonts/Satoshi-Variable.woff2")}")`,
+        { weight: "300 900" }
+      ),
+    ]
+    fontsPromise = Promise.all(
+      fonts.map(async (font) => {
+        await font.load()
+        document.fonts.add(font)
+      })
+    )
+      .then(() => undefined)
+      .catch((error) => {
+        fontsPromise = null
+        throw error
+      })
   }
-  started = true
-
-  for (const weight of INTER_WEIGHTS) {
-    loadFont({
-      family: "Inter",
-      url: staticFile(`fonts/inter-${weight}.woff2`),
-      weight,
-      format: "woff2",
-    })
-  }
-
-  loadFont({
-    family: "Satoshi",
-    url: staticFile("fonts/Satoshi-Variable.woff2"),
-    weight: "300 900",
-    format: "woff2",
-  })
+  return fontsPromise
 }

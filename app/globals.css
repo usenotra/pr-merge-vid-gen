@@ -169,16 +169,59 @@
     #28282814 0 0.0625rem 0.125rem,
     #1e1e1e40 0 0 0 0.0625rem;
   transition:
-    --cta-gradient-from 200ms ease-out,
-    --cta-gradient-to 200ms ease-out,
-    transform 150ms ease-out;
+    --cta-gradient-from 250ms ease-out,
+    --cta-gradient-to 250ms ease-out,
+    transform 250ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease-out;
 
-  &:hover {
-    --cta-gradient-to: oklab(33.9% 0.073 -0.174);
+  &:hover:not(:disabled) {
+    --cta-gradient-from: oklab(72% 0.067 -0.16);
+    --cta-gradient-to: oklab(55% 0.113 -0.27);
   }
 
-  &:active {
-    --cta-gradient-from: oklab(52.6% 0.113 -0.27);
-    --cta-gradient-to: oklab(24.8% 0.053 -0.127);
+  &:active:not(:disabled) {
+    --cta-gradient-from: oklab(68% 0.067 -0.16);
+    --cta-gradient-to: oklab(50% 0.113 -0.27);
+    transform: scale(0.985);
+  }
+}
+
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes swap-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-0.6em);
+    filter: blur(4px);
+  }
+}
+
+/* Theme switch: crossfade the whole page via the View Transitions API. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }

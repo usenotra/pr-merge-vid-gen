@@ -1,6 +1,6 @@
 "use client"
 
-import { DownloadIcon } from "lucide-react"
+import { CheckIcon, DownloadIcon, LoaderCircleIcon } from "lucide-react"
 import { Player } from "@remotion/player"
 import { useQueryState } from "nuqs"
 import { useEffect, useMemo, useState } from "react"
@@ -8,18 +8,30 @@ import { toast } from "sonner"
 
 import { NotraMark } from "@/components/notra-mark"
 import { PeoplePicker } from "@/components/people-picker"
+import { SwapLabel } from "@/components/swap-label"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   DEFAULT_PR_MERGE_PERIOD_DAYS,
   DEFAULT_SELECTED_PEOPLE,
   MAX_SELECTED_PEOPLE,
   PR_MERGE_PERIODS,
 } from "@/constants/pr-merge-video"
+import { CTA_BUTTON_CLASS } from "@/constants/cta"
+import { useVideoExport } from "@/hooks/use-video-export"
 import { useGithubStatus } from "@/hooks/use-github-status"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
+import { formatPeriodLong } from "@/lib/format-period"
 import { parseRepoInput } from "@/lib/parse-repo"
+import { setRepoLoading } from "@/lib/repo-loading-store"
+import { cn } from "@/lib/utils"
 import {
   PR_MERGE_VIDEO_DURATION_IN_FRAMES,
   PR_MERGE_VIDEO_FPS,
@@ -33,6 +45,14 @@ import type {
   RepoPrMergeData,
 } from "@/types/pr-merge-video"
 
+const SKELETON_ROWS = [
+  { name: "58%", meta: "40%" },
+  { name: "44%", meta: "34%" },
+  { name: "66%", meta: "38%" },
+  { name: "50%", meta: "30%" },
+  { name: "60%", meta: "36%" },
+] as const
+
 export function MergePreview() {
   const [repoParam] = useQueryState("repo")
   const [days, setDays] = useState<PrMergePeriodDays>(
@@ -43,7 +63,15 @@ export function MergePreview() {
     data: RepoPrMergeData | null
   } | null>(null)
   const [selectedLogins, setSelectedLogins] = useState<string[]>([])
-  const [isRendering, setIsRendering] = useState(false)
+  const {
+    renderState,
+    progress,
+    error: exportError,
+    download,
+    cancel,
+    isCancelling,
+  } = useVideoExport()
+  const isRendering = renderState === "rendering"
   const { connected, login: githubLogin } = useGithubStatus()
   const prefersReducedMotion = usePrefersReducedMotion()
 
@@ -58,6 +86,11 @@ export function MergePreview() {
   }, [connected, repoParam, days, githubLogin])
   const data = result?.key === requestKey ? result.data : null
   const isLoading = requestKey !== null && result?.key !== requestKey
+
+  useEffect(() => {
+    setRepoLoading(isLoading)
+    return () => setRepoLoading(false)
+  }, [isLoading])
 
   useEffect(() => {
     if (!requestKey || !repoParam) {
@@ -144,47 +177,16 @@ export function MergePreview() {
     setSelectedLogins([...selectedLogins, login])
   }
 
-  const onDownload = async () => {
-    if (!inputProps) {
-      return
-    }
-    setIsRendering(true)
-    const pending = toast.loading(
-      "Rendering your video. This can take a minute."
-    )
-    try {
-      const response = await fetch("/api/render", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(inputProps),
-      })
-      if (response.ok) {
-        const blob = await response.blob()
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = `${inputProps.owner}-${inputProps.repo}-pr-merges.mp4`
-        link.click()
-        URL.revokeObjectURL(url)
-        toast.success("Video ready.", { id: pending })
-      } else {
-        const json: { error?: string } = await response.json().catch(() => ({}))
-        toast.error(json.error ?? "Could not render the video.", {
-          id: pending,
-        })
-      }
-    } catch {
-      toast.error("Unable to render the video. Try again.", { id: pending })
-    }
-    setIsRendering(false)
-  }
-
-  const onPeriodChange = (groupValue: string[]) => {
-    const next = Number(groupValue[0])
-    if (next === 3 || next === 7 || next === 14) {
+  const onPeriodChange = (next: PrMergePeriodDays | null) => {
+    if (next !== null) {
       setDays(next)
     }
   }
+
+  const periodItems = PR_MERGE_PERIODS.map((period) => ({
+    value: period,
+    label: formatPeriodLong(period),
+  }))
 
   const selectedMergeCount = inputProps
     ? inputProps.people.reduce((total, person) => total + person.merges, 0)
@@ -197,35 +199,42 @@ export function MergePreview() {
 
   return (
     <div className="grid h-full min-h-0 min-w-0 grid-cols-1 gap-5 lg:grid-cols-[20rem_minmax(0,1fr)]">
-      <aside className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-3xl bg-card shadow-[0_0_0_0.0625rem_#1E1E1E14,0_0.0625rem_0.125rem_#28282814] dark:shadow-[0_0_0_0.0625rem_#FFFFFF14]">
-        <div className="flex shrink-0 flex-col gap-2.5 px-4 pt-4 pb-3.5">
+      <aside className="flex min-h-0 min-w-0 flex-col gap-6">
+        <div className="flex h-8 shrink-0 items-center justify-between gap-3">
           <p className="font-display text-sm font-semibold tracking-tight">
             Time range
           </p>
-          <ToggleGroup
-            aria-label="Time range"
-            className="w-full"
+          <Select
+            items={periodItems}
             onValueChange={onPeriodChange}
-            size="sm"
-            spacing={0}
-            value={[String(days)]}
-            variant="outline"
+            value={days}
           >
-            {PR_MERGE_PERIODS.map((period) => (
-              <ToggleGroupItem
-                className="flex-1"
-                key={period}
-                value={String(period)}
-              >
-                {period} days
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+            <SelectTrigger
+              aria-label="Time range"
+              className="h-7 min-w-28 gap-1 rounded-full border-border bg-background pr-1.5 pl-2.5 text-[0.8125rem] font-medium [&_svg]:size-3.5"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              align="end"
+              alignItemWithTrigger={false}
+              className="min-w-36 rounded-xl p-1 duration-100 ease-out motion-reduce:animate-none data-open:zoom-in-[0.98] data-closed:zoom-out-[0.98]"
+              sideOffset={6}
+            >
+              {PR_MERGE_PERIODS.map((period) => (
+                <SelectItem
+                  className="rounded-lg py-1 text-[0.8125rem]"
+                  key={period}
+                  value={period}
+                >
+                  {formatPeriodLong(period)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="h-px shrink-0 bg-border" />
-
-        <div className="flex min-h-0 flex-1 flex-col px-4 pt-3.5 pb-3">
+        <div className="flex min-h-0 flex-1 flex-col">
           {data?.people.length ? (
             <PeoplePicker
               maxSelected={MAX_SELECTED_PEOPLE}
@@ -239,39 +248,104 @@ export function MergePreview() {
               <h2 className="font-display text-sm font-semibold tracking-tight">
                 Choose people
               </h2>
-              <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-4 py-6 text-center">
-                <span className="flex -space-x-2">
-                  {[0, 1, 2].map((slot) => (
-                    <span
-                      className="size-7 rounded-full bg-brand-wash ring-2 ring-card"
-                      key={slot}
-                    />
+              <div className="flex min-h-0 flex-1 flex-col gap-4">
+                <div
+                  aria-hidden="true"
+                  className={cn(
+                    "flex flex-col gap-1.5 [mask-image:linear-gradient(to_bottom,black_0%,black_25%,transparent_95%)]",
+                    isLoading && "motion-safe:animate-pulse"
+                  )}
+                >
+                  {SKELETON_ROWS.map((row, index) => (
+                    <div
+                      className="flex items-center gap-2.5 rounded-lg bg-muted/40 p-2"
+                      key={index}
+                    >
+                      <span className="size-8 shrink-0 rounded-full bg-muted" />
+                      <span className="flex grow flex-col gap-1.5">
+                        <span
+                          className="h-2.5 rounded-full bg-muted"
+                          style={{ width: row.name }}
+                        />
+                        <span
+                          className="h-2 rounded-full bg-muted/70"
+                          style={{ width: row.meta }}
+                        />
+                      </span>
+                    </div>
                   ))}
-                </span>
-                <p className="max-w-[14rem] text-xs leading-relaxed text-pretty text-muted-foreground">
+                </div>
+                <p className="text-center text-xs text-muted-foreground">
                   {isLoading
                     ? "Loading contributors…"
-                    : "Analyze a repository to pick up to " +
-                      MAX_SELECTED_PEOPLE +
-                      " people for the video."}
+                    : "No people to show yet"}
                 </p>
               </div>
             </div>
           )}
         </div>
 
-        <div className="h-px shrink-0 bg-border" />
-
-        <div className="flex shrink-0 flex-col gap-2 px-4 pt-3.5 pb-4">
+        <div className="flex shrink-0 flex-col gap-2">
           <Button
-            className="cta-gradient-primary h-11 w-full rounded-full border-0 font-display text-[0.9375rem] font-medium tracking-[-0.01em] hover:bg-transparent active:scale-[0.97]"
+            aria-busy={isRendering || undefined}
+            className={cn(CTA_BUTTON_CLASS, "w-full")}
             disabled={!inputProps || isRendering}
-            onClick={onDownload}
+            onClick={() => inputProps && download(inputProps)}
             size="lg"
           >
-            <DownloadIcon />
-            {isRendering ? "Rendering" : "Download MP4"}
+            <SwapLabel
+              sizers={[
+                <>
+                  <DownloadIcon />
+                  Download MP4
+                </>,
+                <>
+                  <LoaderCircleIcon />
+                  Rendering {progress}%
+                </>,
+              ]}
+              swapKey={renderState}
+            >
+              {renderState === "rendering" ? (
+                <>
+                  <LoaderCircleIcon className="animate-spin" />
+                  Rendering {progress}%
+                </>
+              ) : renderState === "done" ? (
+                <>
+                  <CheckIcon />
+                  Download ready
+                </>
+              ) : (
+                <>
+                  <DownloadIcon />
+                  Download MP4
+                </>
+              )}
+            </SwapLabel>
           </Button>
+          {isRendering ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={cancel}
+              disabled={isCancelling}
+            >
+              {isCancelling ? "Cancelling…" : "Cancel export"}
+            </Button>
+          ) : null}
+          {exportError ? (
+            <p role="alert" className="text-center text-xs text-destructive">
+              {exportError}
+            </p>
+          ) : null}
+          <span className="sr-only" role="status">
+            {isRendering
+              ? `Rendering video: ${progress}%`
+              : renderState === "done"
+                ? "Video download ready"
+                : ""}
+          </span>
           <p className="text-center text-xs text-muted-foreground tabular-nums">
             {inputProps
               ? selectedMergeCount.toLocaleString("en-US") +
@@ -284,15 +358,15 @@ export function MergePreview() {
         </div>
       </aside>
 
-      <div className="grid h-[min(42svh,100%)] min-h-0 min-w-0 overflow-hidden [container-type:size] lg:h-full">
+      <div className="[container-type:size] grid h-[min(42svh,100%)] min-h-0 min-w-0 overflow-hidden lg:h-full">
         <div
-          className="place-self-center overflow-hidden rounded-3xl bg-brand-wash p-2 shadow-[0_0_0_0.0625rem_#1E1E1E14] dark:shadow-[0_0_0_0.0625rem_#FFFFFF1A]"
+          className="place-self-center overflow-hidden rounded-3xl"
           style={{
             width: "min(100cqw, 100cqh)",
             height: "min(100cqw, 100cqh)",
           }}
         >
-          <div className="h-full overflow-hidden rounded-[calc(var(--radius-3xl)-0.5rem)] bg-background shadow-[0_0_0_0.0625rem_#1E1E1E14,0_0.0625rem_0.125rem_#28282814] dark:shadow-[0_0_0_0.0625rem_#FFFFFF14]">
+          <div className="h-full overflow-hidden rounded-3xl bg-background shadow-[0_0_0_0.0625rem_#1E1E1E1F,0_0.125rem_1.25rem_#1E1E1E0A] dark:shadow-[0_0_0_0.0625rem_#FFFFFF1F]">
             {isLoading ? (
               <Skeleton className="h-full w-full rounded-none" />
             ) : null}
