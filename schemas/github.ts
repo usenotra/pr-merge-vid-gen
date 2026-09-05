@@ -1,20 +1,7 @@
+import { MAX_PENDING_OAUTH_STATES } from "@/constants/github-oauth"
+import { REPO_PAIR, REPO_SLUG } from "@/constants/github-repo"
+import { isAllowedAvatarUrl } from "@/lib/github-avatar"
 import * as z from "zod"
-
-const REPO_SLUG = /^[\w.-]+$/
-const REPO_PAIR = /^[\w.-]{1,100}\/[\w.-]{1,100}$/
-
-function isAllowedAvatarUrl(value: string): boolean {
-  try {
-    const url = new URL(value)
-    return (
-      url.protocol === "https:" &&
-      (url.hostname === "githubusercontent.com" ||
-        url.hostname.endsWith(".githubusercontent.com"))
-    )
-  } catch {
-    return false
-  }
-}
 
 export const githubAvatarUrlSchema = z
   .url()
@@ -35,8 +22,6 @@ export const githubRepoSlugSchema = z
   .regex(REPO_SLUG, "Enter a valid GitHub repository.")
 
 export const githubReturnRepoSchema = z.string().trim().regex(REPO_PAIR)
-
-export const MAX_PENDING_OAUTH_STATES = 5
 
 const githubOAuthStateSchema = z.object({
   state: z.string().min(1),

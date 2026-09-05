@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 import {
   GITHUB_STATE_COOKIE,
   GITHUB_STATE_MAX_AGE_SECONDS,
-} from "@/lib/github-cookies"
+} from "@/constants/github-cookies"
 import {
   appendPendingOAuthState,
   buildGithubAuthorizeUrl,

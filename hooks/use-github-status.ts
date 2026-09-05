@@ -1,5 +1,9 @@
 "use client"
 
+import type { GithubStatusLoadState } from "@/types/github"
+
+import { idleStatus } from "@/constants/github-status"
+
 import { useEffect, useState, useSyncExternalStore } from "react"
 
 import {
@@ -9,13 +13,7 @@ import {
 } from "@/lib/github-connection"
 import type { GithubStatus } from "@/types/github"
 
-const idleStatus: GithubStatus = {
-  connected: false,
-  login: null,
-  oauthConfigured: false,
-}
-
-export function useGithubStatus(): GithubStatus & { loaded: boolean } {
+export function useGithubStatus(): GithubStatus & GithubStatusLoadState {
   const cookieLogin = useSyncExternalStore(
     subscribeToGithubConnection,
     getGithubLogin,

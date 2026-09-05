@@ -1,11 +1,13 @@
 "use client"
 
+import type { ThemeToggleProps } from "@/types/appearance"
+
 import { MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useSyncExternalStore } from "react"
 
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 const subscribe = () => () => {}
 
@@ -20,7 +22,7 @@ function startThemeTransition(update: () => void) {
   document.startViewTransition(update)
 }
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = useSyncExternalStore(
     subscribe,

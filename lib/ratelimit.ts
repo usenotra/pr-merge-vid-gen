@@ -1,13 +1,8 @@
+import { LIMITS } from "@/constants/ratelimit"
+import type { LimiterKind } from "@/types/ratelimit"
 import { createHash } from "node:crypto"
 
 import type { NextRequest } from "next/server"
-
-type LimiterKind = "lookup" | "render"
-
-const LIMITS: Record<LimiterKind, { requests: number; windowMs: number }> = {
-  lookup: { requests: 20, windowMs: 60 * 60 * 1000 },
-  render: { requests: 10, windowMs: 60 * 60 * 1000 },
-}
 
 const buckets = new Map<string, number[]>()
 

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
-import { GITHUB_CONNECTION_REQUIRED_MESSAGE } from "@/lib/github-cookies"
+import { GITHUB_CONNECTION_REQUIRED_MESSAGE } from "@/constants/github-cookies"
 import { clearGithubCookies, readGithubToken } from "@/lib/github-oauth"
 import { loadRepoPrMergeData } from "@/lib/load-repo"
 import { isRateLimited } from "@/lib/ratelimit"

@@ -8,7 +8,7 @@ import {
   GITHUB_STATE_COOKIE,
   GITHUB_TOKEN_COOKIE,
   GITHUB_TOKEN_COOKIE_PATH,
-} from "@/lib/github-cookies"
+} from "@/constants/github-cookies"
 import {
   encryptGithubToken,
   exchangeGithubCode,

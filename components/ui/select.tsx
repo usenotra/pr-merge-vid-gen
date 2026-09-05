@@ -1,9 +1,11 @@
 "use client"
 
-import * as React from "react"
+import type { SelectTriggerOptions } from "@/types/select"
+
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
-import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import * as React from "react"
 
 const Select = SelectPrimitive.Root
 
@@ -32,9 +34,7 @@ function SelectTrigger({
   size = "default",
   children,
   ...props
-}: SelectPrimitive.Trigger.Props & {
-  size?: "sm" | "default"
-}) {
+}: SelectPrimitive.Trigger.Props & SelectTriggerOptions) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"

@@ -1,21 +1,21 @@
 "use client"
 
+import type { VideoRenderState } from "@/types/render"
+
 import { useEffect, useRef, useState } from "react"
 
+import {
+  PR_MERGE_VIDEO_DURATION_IN_FRAMES,
+  PR_MERGE_VIDEO_FPS,
+  PR_MERGE_VIDEO_HEIGHT,
+  PR_MERGE_VIDEO_WIDTH,
+} from "@/constants/video-composition"
 import { ensurePrMergeFonts } from "@/remotion/load-fonts"
 import { PrMergeVideo } from "@/remotion/pr-merge-video"
-import {
-  PR_MERGE_VIDEO_WIDTH,
-  PR_MERGE_VIDEO_HEIGHT,
-  PR_MERGE_VIDEO_FPS,
-  PR_MERGE_VIDEO_DURATION_IN_FRAMES,
-} from "@/remotion/constants"
 import type { PrMergeVideoInputProps } from "@/types/pr-merge-video"
 
 export function useVideoExport() {
-  const [renderState, setRenderState] = useState<"idle" | "rendering" | "done">(
-    "idle"
-  )
+  const [renderState, setRenderState] = useState<VideoRenderState>("idle")
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isCancelling, setIsCancelling] = useState(false)

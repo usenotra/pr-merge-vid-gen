@@ -1,9 +1,12 @@
-const GITHUB_HOSTS = new Set(["github.com", "www.github.com"])
-const SLUG_PART = /^[\w.-]+$/
-const GIT_SUFFIX = /\.git$/i
-const HAS_SCHEME = /^https?:\/\//i
-const CONTAINS_GITHUB_PATH = /(^|\.)github\.com\//i
-const SSH_GITHUB = /^(?:ssh:\/\/)?git@github\.com[:/]([^/\s]+)\/([^/\s]+)$/i
+import {
+  CONTAINS_GITHUB_PATH,
+  GIT_SUFFIX,
+  GITHUB_HOSTS,
+  HAS_SCHEME,
+  SLUG_PART,
+  SSH_GITHUB,
+} from "@/constants/github-repo"
+import type { GithubRepo } from "@/types/github"
 
 function extractOwnerRepo(raw: string): string | null {
   const ssh = SSH_GITHUB.exec(raw)
@@ -32,9 +35,7 @@ function extractOwnerRepo(raw: string): string | null {
   return `${segments[0]}/${segments[1]}`
 }
 
-export function parseRepoInput(
-  raw: string
-): { owner: string; repo: string } | null {
+export function parseRepoInput(raw: string): GithubRepo | null {
   const trimmed = raw.trim()
   if (!trimmed) {
     return null

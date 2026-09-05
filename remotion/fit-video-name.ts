@@ -1,4 +1,4 @@
-import { VIDEO_FONT_DISPLAY } from "./constants"
+import { VIDEO_FONT_DISPLAY } from "@/constants/video-composition"
 
 export function fitVideoName(name: string): string {
   const context = document.createElement("canvas").getContext("2d")

@@ -1,22 +1,22 @@
 "use client"
 
 import { LoaderCircleIcon } from "lucide-react"
-import { type FormEvent, useState } from "react"
 import { useQueryState } from "nuqs"
+import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
 
 import { GitHubMark } from "@/components/github-mark"
+import { SwapLabel } from "@/components/swap-label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { SwapLabel } from "@/components/swap-label"
 import { CTA_BUTTON_CLASS } from "@/constants/cta"
 import { DEFAULT_REPO_INPUT } from "@/constants/pr-merge-video"
 import { useGithubStatus } from "@/hooks/use-github-status"
 import { buildGithubConnectHref } from "@/lib/github-connection"
 import { parseRepoInput } from "@/lib/parse-repo"
 import { useRepoLoading } from "@/lib/repo-loading-store"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 export function RepoForm() {
   const [repoParam, setRepoParam] = useQueryState("repo")

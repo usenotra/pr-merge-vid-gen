@@ -1,18 +1,17 @@
 "use client"
 
-import * as React from "react"
+import type { ToggleGroupOptions } from "@/types/toggle"
+
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group"
 import { type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
+import * as React from "react"
 
-import { toggleVariants } from "@/components/ui/toggle"
+import { toggleVariants } from "@/constants/toggle"
 
 const ToggleGroupContext = React.createContext<
-  VariantProps<typeof toggleVariants> & {
-    spacing?: number
-    orientation?: "horizontal" | "vertical"
-  }
+  VariantProps<typeof toggleVariants> & ToggleGroupOptions
 >({
   size: "default",
   variant: "default",
@@ -29,10 +28,8 @@ function ToggleGroup({
   children,
   ...props
 }: ToggleGroupPrimitive.Props &
-  VariantProps<typeof toggleVariants> & {
-    spacing?: number
-    orientation?: "horizontal" | "vertical"
-  }) {
+  VariantProps<typeof toggleVariants> &
+  ToggleGroupOptions) {
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"

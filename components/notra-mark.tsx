@@ -1,4 +1,5 @@
-export function NotraMark({ className }: { className?: string }) {
+import type { NotraMarkProps } from "@/types/appearance"
+export function NotraMark({ className }: NotraMarkProps) {
   return (
     <svg
       aria-hidden="true"

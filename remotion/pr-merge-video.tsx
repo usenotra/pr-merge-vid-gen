@@ -10,7 +10,7 @@ import {
   VIDEO_COLOR_MUTED,
   VIDEO_FONT_DISPLAY,
   VIDEO_FONT_SANS,
-} from "./constants"
+} from "@/constants/video-composition"
 import { ensurePrMergeFonts } from "./load-fonts"
 import { MergeRow } from "./merge-row"
 import { VideoNotraMark } from "./notra-mark"

@@ -1,6 +1,10 @@
-import { VIDEO_COLOR_INK, VIDEO_COLOR_LAVENDER } from "./constants"
+import {
+  VIDEO_COLOR_INK,
+  VIDEO_COLOR_LAVENDER,
+} from "@/constants/video-composition"
+import type { VideoNotraMarkProps } from "@/types/appearance"
 
-export function VideoNotraMark({ size }: { size: number }) {
+export function VideoNotraMark({ size }: VideoNotraMarkProps) {
   return (
     <svg
       fill="none"

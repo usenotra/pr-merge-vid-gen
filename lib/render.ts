@@ -1,3 +1,4 @@
+import { MAX_CONCURRENT_RENDERS } from "@/constants/render"
 import { mkdtemp, readFile, rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
@@ -17,7 +18,6 @@ export class RenderBusy extends Error {
   readonly kind = "busy" as const
 }
 
-const MAX_CONCURRENT_RENDERS = 2
 let activeRenders = 0
 let serveUrlPromise: Promise<string> | null = null
 

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
-import { GITHUB_STATE_COOKIE } from "@/lib/github-cookies"
+import { GITHUB_STATE_COOKIE } from "@/constants/github-cookies"
 import { clearGithubCookies } from "@/lib/github-oauth"
 
 export const runtime = "nodejs"

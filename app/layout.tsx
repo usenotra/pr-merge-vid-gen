@@ -1,9 +1,11 @@
+import { SITE_METADATA, SITE_VIEWPORT } from "@/constants/site"
+import type { ChildrenProps } from "@/types/layout"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import localFont from "next/font/local"
 
 import { Providers } from "@/components/providers"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 import "./globals.css"
 
@@ -19,27 +21,11 @@ const satoshi = localFont({
   display: "swap",
 })
 
-const title = "PR merge video by Notra"
-const description =
-  "Turn a GitHub repository's recent pull request merges into an animated leaderboard and downloadable MP4."
+export const viewport: Viewport = SITE_VIEWPORT
 
-export const viewport: Viewport = {
-  themeColor: [
-    { color: "#ffffff", media: "(prefers-color-scheme: light)" },
-    { color: "#131319", media: "(prefers-color-scheme: dark)" },
-  ],
-}
+export const metadata: Metadata = SITE_METADATA
 
-export const metadata: Metadata = {
-  title,
-  description,
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<ChildrenProps>) {
   return (
     <html
       className={cn(

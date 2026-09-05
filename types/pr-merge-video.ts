@@ -67,3 +67,8 @@ export interface GithubGraphqlResponse<T> {
   data?: T
   errors?: Array<{ message: string }>
 }
+
+export type GithubPrMergePage = {
+  status: number
+  payload: GithubGraphqlResponse<GithubPrMergeSearchData> | null
+}

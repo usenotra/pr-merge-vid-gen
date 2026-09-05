@@ -1,4 +1,5 @@
-export function GitHubMark({ className }: { className?: string }) {
+import type { GithubMarkProps } from "@/types/appearance"
+export function GitHubMark({ className }: GithubMarkProps) {
   return (
     <svg
       aria-hidden="true"

@@ -49,3 +49,13 @@ Sandbox or object storage is needed. Remotion Studio remains available locally.
 
 The browser exports locally, but still fetches GitHub avatars and sends Remotion
 render telemetry. No GitHub token is passed to the video renderer.
+
+## Code organization
+
+- `types/`: TypeScript types and interfaces, grouped by domain.
+- `schemas/`: runtime validation schemas.
+- `constants/`: shared values and configuration, including UI variants and video composition settings.
+- `lib/`: shared helpers and service logic; keep each file focused on one concern.
+- `components/`, `hooks/`, `remotion/`, and `app/`: components, hooks, video features, and Next.js entry points.
+
+Import directly from domain files without re-export barrels. Import `cn` directly from the `cn` package. Keep Next.js route exports and font initialization in their framework entry points.

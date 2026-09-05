@@ -1,4 +1,15 @@
 import {
+  AUTH_TAG_LENGTH,
+  AUTHORIZE_URL,
+  CALLBACK_PATH,
+  IV_LENGTH,
+  MAX_PENDING_OAUTH_STATES,
+  STATE_LENGTH,
+  TOKEN_URL,
+  USER_AGENT,
+  VIEWER_URL,
+} from "@/constants/github-oauth"
+import {
   createCipheriv,
   createDecipheriv,
   createHash,
@@ -12,23 +23,13 @@ import {
   GITHUB_COOKIE_PATH,
   GITHUB_TOKEN_COOKIE,
   GITHUB_TOKEN_COOKIE_PATH,
-} from "@/lib/github-cookies"
+} from "@/constants/github-cookies"
 import {
   githubAccessTokenSchema,
   githubOAuthStatesSchema,
   githubViewerSchema,
-  MAX_PENDING_OAUTH_STATES,
 } from "@/schemas/github"
 import type { GithubOAuthConfig, GithubOAuthState } from "@/types/github"
-
-const AUTHORIZE_URL = "https://github.com/login/oauth/authorize"
-const TOKEN_URL = "https://github.com/login/oauth/access_token"
-const VIEWER_URL = "https://api.github.com/user"
-const IV_LENGTH = 12
-const AUTH_TAG_LENGTH = 16
-const STATE_LENGTH = 16
-const CALLBACK_PATH = "/api/github/callback"
-const USER_AGENT = "pr-merge-vid-gen"
 
 export function getGithubOAuthConfig(): GithubOAuthConfig | null {
   const clientId = process.env.GITHUB_CLIENT_ID

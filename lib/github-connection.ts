@@ -1,4 +1,4 @@
-import { GITHUB_CONNECTED_COOKIE } from "@/lib/github-cookies"
+import { GITHUB_CONNECTED_COOKIE } from "@/constants/github-cookies"
 
 export function subscribeToGithubConnection(listener: () => void): () => void {
   window.addEventListener("focus", listener)

@@ -1,20 +1,12 @@
 "use client"
 
-import { type ReactNode, useEffect, useRef, useState } from "react"
+import type { SwapLabelContent } from "@/types/swap-label"
 
-import { cn } from "@/lib/utils"
+import type { SwapLabelProps } from "@/types/swap-label"
 
-interface SwapLabelProps {
-  /** Changing this key triggers the swap animation. */
-  swapKey: string
-  children: ReactNode
-  className?: string
-  /**
-   * Every possible label, rendered invisibly in the same cell so the
-   * container keeps the width of the widest one and never shifts.
-   */
-  sizers?: ReactNode[]
-}
+import { useEffect, useRef, useState } from "react"
+
+import { cn } from "cn"
 
 /**
  * Cross-fades content: the new label slides up from below with a blur,
@@ -27,10 +19,7 @@ export function SwapLabel({
   sizers,
 }: SwapLabelProps) {
   const previous = useRef({ key: swapKey, node: children })
-  const [leaving, setLeaving] = useState<{
-    key: string
-    node: ReactNode
-  } | null>(null)
+  const [leaving, setLeaving] = useState<SwapLabelContent | null>(null)
 
   useEffect(() => {
     if (swapKey !== previous.current.key) {

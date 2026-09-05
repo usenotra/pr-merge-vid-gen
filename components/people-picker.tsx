@@ -1,14 +1,15 @@
 "use client"
 
+import type { PeoplePickerProps } from "@/types/people-picker"
+
+import { AVATAR_SIZE_PX } from "@/constants/people-picker"
+
 import { CheckIcon } from "lucide-react"
 import Image from "next/image"
 import { useRef } from "react"
 
 import { useScrollOverflow } from "@/hooks/use-scroll-overflow"
-import { cn } from "@/lib/utils"
-import type { PrMergePerson } from "@/types/pr-merge-video"
-
-const AVATAR_SIZE_PX = 80
+import { cn } from "cn"
 
 export function PeoplePicker({
   people,
@@ -16,13 +17,7 @@ export function PeoplePicker({
   maxSelected,
   truncated,
   onToggle,
-}: {
-  people: PrMergePerson[]
-  selectedLogins: string[]
-  maxSelected: number
-  truncated: boolean
-  onToggle: (login: string) => void
-}) {
+}: PeoplePickerProps) {
   const listRef = useRef<HTMLDivElement | null>(null)
   const hasMoreBelow = useScrollOverflow(listRef)
 

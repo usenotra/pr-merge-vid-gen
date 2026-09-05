@@ -1,8 +1,8 @@
 "use client"
 
-import { type RefObject, useEffect, useState } from "react"
+import { EDGE_THRESHOLD_PX } from "@/constants/scroll"
 
-const EDGE_THRESHOLD_PX = 2
+import { type RefObject, useEffect, useState } from "react"
 
 /**
  * Tracks whether a scroll container has hidden content below the fold.

@@ -1,61 +1,20 @@
 import {
-  GITHUB_SEARCH_PAGE_SIZE,
-  MAX_GITHUB_SEARCH_PAGES,
-} from "@/constants/pr-merge-video"
+  GITHUB_GRAPHQL_URL,
+  HTTP_UNAUTHORIZED,
+  MILLISECONDS_PER_DAY,
+  PR_MERGE_QUERY,
+  USER_AGENT,
+} from "@/constants/github-merges"
+import { MAX_GITHUB_SEARCH_PAGES } from "@/constants/pr-merge-video"
 import type {
   GithubGraphqlResponse,
   GithubPrMergeActor,
+  GithubPrMergePage,
   GithubPrMergeSearchData,
   PrMergePeriodDays,
   PrMergePerson,
   RepoPrMergeData,
 } from "@/types/pr-merge-video"
-
-const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000
-const HTTP_UNAUTHORIZED = 401
-const USER_AGENT = "pr-merge-vid-gen"
-
-const PR_MERGE_QUERY = `
-  query PrMerges(
-    $owner: String!
-    $repo: String!
-    $queryString: String!
-    $after: String
-  ) {
-    repository(owner: $owner, name: $repo) {
-      name
-      nameWithOwner
-      url
-      isPrivate
-    }
-    search(
-      query: $queryString
-      type: ISSUE
-      first: ${GITHUB_SEARCH_PAGE_SIZE}
-      after: $after
-    ) {
-      issueCount
-      nodes {
-        ... on PullRequest {
-          mergedAt
-          mergedBy {
-            __typename
-            login
-            avatarUrl(size: 280)
-            ... on User {
-              name
-            }
-          }
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-`
 
 export class RepoNotFound extends Error {
   readonly kind = "not-found" as const
@@ -117,10 +76,7 @@ async function fetchPage(
   queryString: string,
   after: string | null,
   token: string
-): Promise<{
-  status: number
-  payload: GithubGraphqlResponse<GithubPrMergeSearchData> | null
-}> {
+): Promise<GithubPrMergePage> {
   try {
     const response = await fetch(
       GITHUB_GRAPHQL_URL,

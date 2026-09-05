@@ -8,7 +8,7 @@ import {
   PR_MERGE_VIDEO_FPS,
   PR_MERGE_VIDEO_HEIGHT,
   PR_MERGE_VIDEO_WIDTH,
-} from "./constants"
+} from "@/constants/video-composition"
 import { PrMergeVideo } from "./pr-merge-video"
 
 export function RemotionRoot() {

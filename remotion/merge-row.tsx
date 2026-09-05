@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 
-import { fitVideoName } from "./fit-video-name"
 import { Img, useCurrentFrame, useVideoConfig } from "remotion"
+import { fitVideoName } from "./fit-video-name"
 
 import type { PrMergeRowProps } from "@/types/pr-merge-video"
 
@@ -19,7 +19,7 @@ import {
   VIDEO_COLOR_LAVENDER,
   VIDEO_COLOR_MUTED,
   VIDEO_FONT_DISPLAY,
-} from "./constants"
+} from "@/constants/video-composition"
 
 export function MergeRow({
   person,

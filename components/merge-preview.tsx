@@ -1,7 +1,14 @@
 "use client"
 
-import { CheckIcon, DownloadIcon, LoaderCircleIcon } from "lucide-react"
+import type {
+  MergePreviewResult,
+  RepoErrorResponse,
+} from "@/types/merge-preview"
+
+import { SKELETON_ROWS } from "@/constants/merge-preview"
+
 import { Player } from "@remotion/player"
+import { CheckIcon, DownloadIcon, LoaderCircleIcon } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -10,7 +17,6 @@ import { NotraMark } from "@/components/notra-mark"
 import { PeoplePicker } from "@/components/people-picker"
 import { SwapLabel } from "@/components/swap-label"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Select,
   SelectContent,
@@ -18,50 +24,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
+import { CTA_BUTTON_CLASS } from "@/constants/cta"
 import {
   DEFAULT_PR_MERGE_PERIOD_DAYS,
   DEFAULT_SELECTED_PEOPLE,
   MAX_SELECTED_PEOPLE,
   PR_MERGE_PERIODS,
 } from "@/constants/pr-merge-video"
-import { CTA_BUTTON_CLASS } from "@/constants/cta"
-import { useVideoExport } from "@/hooks/use-video-export"
-import { useGithubStatus } from "@/hooks/use-github-status"
-import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
-import { formatPeriodLong } from "@/lib/format-period"
-import { parseRepoInput } from "@/lib/parse-repo"
-import { setRepoLoading } from "@/lib/repo-loading-store"
-import { cn } from "@/lib/utils"
 import {
   PR_MERGE_VIDEO_DURATION_IN_FRAMES,
   PR_MERGE_VIDEO_FPS,
   PR_MERGE_VIDEO_HEIGHT,
   PR_MERGE_VIDEO_WIDTH,
-} from "@/remotion/constants"
+} from "@/constants/video-composition"
+import { useGithubStatus } from "@/hooks/use-github-status"
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
+import { useVideoExport } from "@/hooks/use-video-export"
+import { formatPeriodLong } from "@/lib/format-period"
+import { parseRepoInput } from "@/lib/parse-repo"
+import { setRepoLoading } from "@/lib/repo-loading-store"
 import { PrMergeVideo } from "@/remotion/pr-merge-video"
 import type {
   PrMergePeriodDays,
   PrMergeVideoInputProps,
   RepoPrMergeData,
 } from "@/types/pr-merge-video"
-
-const SKELETON_ROWS = [
-  { name: "58%", meta: "40%" },
-  { name: "44%", meta: "34%" },
-  { name: "66%", meta: "38%" },
-  { name: "50%", meta: "30%" },
-  { name: "60%", meta: "36%" },
-] as const
+import { cn } from "cn"
 
 export function MergePreview() {
   const [repoParam] = useQueryState("repo")
   const [days, setDays] = useState<PrMergePeriodDays>(
     DEFAULT_PR_MERGE_PERIOD_DAYS
   )
-  const [result, setResult] = useState<{
-    key: string
-    data: RepoPrMergeData | null
-  } | null>(null)
+  const [result, setResult] = useState<MergePreviewResult | null>(null)
   const [selectedLogins, setSelectedLogins] = useState<string[]>([])
   const {
     renderState,
@@ -124,7 +120,7 @@ export function MergePreview() {
               .map((person) => person.login)
           )
         } else {
-          const json: { error?: string } = await response
+          const json: RepoErrorResponse = await response
             .json()
             .catch(() => ({}))
           if (controller.signal.aborted) {

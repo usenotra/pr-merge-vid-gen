@@ -10,8 +10,8 @@ import {
   getDitherMobileSnapshot,
   subscribeToDitherViewport,
 } from "@/lib/dither-environment"
-import { cn } from "@/lib/utils"
 import type { DeferredDitheringProps } from "@/types/dithering"
+import { cn } from "cn"
 
 const Dithering = dynamic(
   () =>
