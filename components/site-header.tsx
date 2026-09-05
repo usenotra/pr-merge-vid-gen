@@ -16,10 +16,7 @@ export function SiteHeader() {
         <span className="font-display text-[1.0625rem] font-semibold tracking-[-0.03em] text-[#1e1e1e] dark:text-white">
           Notra
         </span>
-        <span
-          aria-hidden="true"
-          className="h-4 w-px bg-border"
-        />
+        <span aria-hidden="true" className="h-4 w-px bg-border" />
         <span className="font-sans text-sm font-medium text-muted-foreground">
           PR merge video
         </span>

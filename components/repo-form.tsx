@@ -121,6 +121,7 @@ export function RepoForm() {
           <Button
             className="h-auto px-0 text-xs"
             nativeButton={false}
+            // oxlint-disable-next-line nextjs/no-html-link-for-pages -- API route logout, not a page navigation; <a> forces a full reload so cookies clear
             render={<a href="/api/github/logout" />}
             size="sm"
             variant="link"
