@@ -1,0 +1,51 @@
+"use client"
+
+import dynamic from "next/dynamic"
+import { useSyncExternalStore } from "react"
+
+import { DITHER_MOBILE_MAX_PIXELS } from "@/constants/dithering"
+import { useDitherVisibility } from "@/hooks/use-dither-visibility"
+import {
+  getDitherEnvironmentServerSnapshot,
+  getDitherMobileSnapshot,
+  subscribeToDitherViewport,
+} from "@/lib/dither-environment"
+import type { DeferredDitheringProps } from "@/types/dithering"
+import { cn } from "cn"
+
+const Dithering = dynamic(
+  () =>
+    import("@paper-design/shaders-react").then((module_) => module_.Dithering),
+  { ssr: false }
+)
+
+export function DeferredDithering({
+  className,
+  speed,
+  ...shaderProps
+}: DeferredDitheringProps) {
+  const { containerRef, shouldRender, isAnimating } = useDitherVisibility()
+  const isMobile = useSyncExternalStore(
+    subscribeToDitherViewport,
+    getDitherMobileSnapshot,
+    getDitherEnvironmentServerSnapshot
+  )
+
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("pointer-events-none", className)}
+      ref={containerRef}
+    >
+      {shouldRender ? (
+        <Dithering
+          {...shaderProps}
+          className="h-full w-full"
+          maxPixelCount={isMobile ? DITHER_MOBILE_MAX_PIXELS : undefined}
+          minPixelRatio={isMobile ? 1 : undefined}
+          speed={isAnimating ? speed : 0}
+        />
+      ) : null}
+    </div>
+  )
+}

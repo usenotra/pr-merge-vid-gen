@@ -1,0 +1,3 @@
+[install]
+# Bun is the package manager for this repo (see packageManager in package.json).
+# Run scripts with `bun dev`, `bun run build`, etc. — no `bunx --bun` needed.

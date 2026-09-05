@@ -1,0 +1,60 @@
+import {
+  CONTAINS_GITHUB_PATH,
+  GIT_SUFFIX,
+  GITHUB_HOSTS,
+  HAS_SCHEME,
+  SLUG_PART,
+  SSH_GITHUB,
+} from "@/constants/github-repo"
+import type { GithubRepo } from "@/types/github"
+
+function extractOwnerRepo(raw: string): string | null {
+  const ssh = SSH_GITHUB.exec(raw)
+  if (ssh) {
+    return `${ssh[1]}/${ssh[2]}`
+  }
+  if (!(HAS_SCHEME.test(raw) || CONTAINS_GITHUB_PATH.test(raw))) {
+    return raw
+  }
+
+  let url: URL
+  try {
+    url = new URL(HAS_SCHEME.test(raw) ? raw : `https://${raw}`)
+  } catch {
+    return null
+  }
+
+  if (!GITHUB_HOSTS.has(url.hostname.toLowerCase())) {
+    return null
+  }
+
+  const segments = url.pathname.split("/").filter(Boolean)
+  if (segments.length < 2) {
+    return null
+  }
+  return `${segments[0]}/${segments[1]}`
+}
+
+export function parseRepoInput(raw: string): GithubRepo | null {
+  const trimmed = raw.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  const ownerRepo = extractOwnerRepo(trimmed)
+  if (!ownerRepo) {
+    return null
+  }
+
+  const [owner, repo] = ownerRepo.split("/")
+  if (!(owner && repo)) {
+    return null
+  }
+
+  const cleanRepo = repo.replace(GIT_SUFFIX, "")
+  if (!(SLUG_PART.test(owner) && SLUG_PART.test(cleanRepo))) {
+    return null
+  }
+
+  return { owner, repo: cleanRepo }
+}
