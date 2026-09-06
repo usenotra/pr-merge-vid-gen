@@ -189,6 +189,20 @@
   }
 }
 
+.export-cancel {
+  background: linear-gradient(to bottom, #54272b, #371b20);
+  box-shadow:
+    #382126 0 0 0 0.25rem,
+    #28282814 0 0.0625rem 0.125rem,
+    #1e1e1e40 0 0 0 0.0625rem;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      filter: brightness(1.15);
+    }
+  }
+}
+
 @keyframes swap-in {
   from {
     opacity: 0;

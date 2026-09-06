@@ -21,6 +21,16 @@ export function useVideoExport() {
   const [isCancelling, setIsCancelling] = useState(false)
   const controllerRef = useRef<AbortController | null>(null)
 
+  useEffect(() => {
+    if (renderState !== "done") return
+
+    const timeout = window.setTimeout(() => {
+      setRenderState((current) => (current === "done" ? "idle" : current))
+    }, 3000)
+
+    return () => window.clearTimeout(timeout)
+  }, [renderState])
+
   useEffect(
     () => () => {
       controllerRef.current?.abort()

@@ -96,13 +96,13 @@ export function MergeRow({
       <div
         style={{
           position: "absolute",
-          left: centerX,
-          top: centerY,
+          left: 0,
+          top: 0,
           width: diameter + 10,
           height: diameter + 10,
           borderRadius: "50%",
           overflow: "hidden",
-          transform: "translate(-50%, -50%)",
+          transform: `translate(${centerX - radius - 5}px, ${centerY - radius - 5}px)`,
           backgroundColor: `${VIDEO_COLOR_INK}1a`,
         }}
       >

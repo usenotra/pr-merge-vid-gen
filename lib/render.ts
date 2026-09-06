@@ -67,6 +67,7 @@ export async function renderPrMergeVideo(
         composition,
         serveUrl,
         codec: "h264",
+        imageFormat: "png",
         crf: VIDEO_CRF,
         x264Preset: VIDEO_X264_PRESET,
         outputLocation,

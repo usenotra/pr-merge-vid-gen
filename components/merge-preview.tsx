@@ -14,6 +14,7 @@ import {
   DownloadIcon,
   LoaderCircleIcon,
   PlayIcon,
+  XIcon,
 } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { useEffect, useMemo, useState } from "react"
@@ -289,65 +290,84 @@ export function MergePreview() {
         </div>
 
         <div className="flex shrink-0 flex-col gap-2">
-          <Button
-            aria-busy={isRendering || undefined}
-            className={cn(CTA_BUTTON_CLASS, "w-full")}
-            disabled={!inputProps || isRendering}
-            onClick={() => inputProps && download(inputProps)}
-            size="lg"
-          >
-            <SwapLabel
-              sizers={[
-                <>
-                  <DownloadIcon />
-                  Download MP4
-                </>,
-                <>
-                  <LoaderCircleIcon />
-                  Rendering {progress}%
-                </>,
-              ]}
-              swapKey={renderState}
-            >
-              {renderState === "rendering" ? (
-                <>
-                  <LoaderCircleIcon className="animate-spin" />
-                  Rendering {progress}%
-                </>
-              ) : renderState === "done" ? (
-                <>
-                  <CheckIcon />
-                  Download ready
-                </>
-              ) : (
-                <>
-                  <DownloadIcon />
-                  Download MP4
-                </>
-              )}
-            </SwapLabel>
-          </Button>
-          {isRendering ? (
+          <div className="flex items-center">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={cancel}
-              disabled={isCancelling}
+              aria-busy={isRendering || undefined}
+              className={cn(CTA_BUTTON_CLASS, "min-w-0 flex-1")}
+              disabled={!inputProps || isRendering}
+              onClick={() => inputProps && download(inputProps)}
+              size="lg"
             >
-              {isCancelling ? "Cancelling…" : "Cancel export"}
+              <SwapLabel
+                sizers={[
+                  <>
+                    <DownloadIcon />
+                    Download MP4
+                  </>,
+                  <>
+                    <LoaderCircleIcon />
+                    Rendering {progress}%
+                  </>,
+                ]}
+                swapKey={renderState}
+              >
+                {renderState === "rendering" ? (
+                  <>
+                    <LoaderCircleIcon className="animate-spin" />
+                    Rendering {progress}%
+                  </>
+                ) : renderState === "done" ? (
+                  <>
+                    <CheckIcon />
+                    Download ready
+                  </>
+                ) : (
+                  <>
+                    <DownloadIcon />
+                    Download MP4
+                  </>
+                )}
+              </SwapLabel>
             </Button>
-          ) : null}
+            <div
+              inert={!isRendering}
+              aria-hidden={!isRendering}
+              className={cn(
+                "flex shrink-0 justify-end transition-[width,opacity,transform] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+                isRendering
+                  ? "w-14 translate-x-0 opacity-100"
+                  : "pointer-events-none w-0 translate-x-2 opacity-0"
+              )}
+            >
+              <Button
+                aria-label={
+                  isCancelling ? "Cancelling export" : "Cancel export"
+                }
+                aria-busy={isCancelling || undefined}
+                title={isCancelling ? "Cancelling export" : "Cancel export"}
+                className="export-cancel size-11 rounded-full border-0 text-[#ff656b] transition-[filter,transform] duration-150 ease-out hover:text-[#ff656b] active:scale-[0.96] active:not-aria-[haspopup]:translate-y-0 disabled:opacity-100 motion-reduce:transition-none"
+                variant="ghost"
+                size="icon"
+                onClick={cancel}
+                disabled={!isRendering || isCancelling}
+              >
+                <XIcon aria-hidden="true" className="size-5" />
+              </Button>
+            </div>
+          </div>
           {exportError ? (
             <p role="alert" className="text-center text-xs text-destructive">
               {exportError}
             </p>
           ) : null}
           <span className="sr-only" role="status">
-            {isRendering
-              ? `Rendering video: ${progress}%`
-              : renderState === "done"
-                ? "Video download ready"
-                : ""}
+            {isCancelling
+              ? "Cancelling export"
+              : isRendering
+                ? `Rendering video: ${progress}%`
+                : renderState === "done"
+                  ? "Video download ready"
+                  : ""}
           </span>
           {inputProps ? (
             <p className="text-center text-xs text-muted-foreground tabular-nums">
