@@ -10,7 +10,7 @@ export function SiteHeader() {
         rel="noreferrer"
         target="_blank"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-white p-1 shadow-[0_0_0_0.0625rem_#1E1E1E14]">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-md p-1 dark:bg-white dark:shadow-[0_0_0_0.0625rem_#1E1E1E14]">
           <NotraMark className="size-7 text-brand-ink" />
         </span>
         <span className="font-display text-[1.0625rem] font-semibold tracking-[-0.03em] text-[#1e1e1e] dark:text-white">

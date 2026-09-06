@@ -9,7 +9,7 @@ import { NOTRA_DITHER_PRESET } from "@/constants/dithering"
 export default function HomePage() {
   return (
     <main
-      className="mx-auto flex h-svh w-full max-w-6xl flex-col gap-6 overflow-hidden px-4 py-4 max-lg:h-auto max-lg:min-h-svh max-lg:overflow-y-auto sm:px-6"
+      className="mx-auto flex min-h-svh w-full max-w-6xl flex-col gap-6 px-4 py-4 sm:px-6 wide:h-svh wide:overflow-hidden"
       id="content"
     >
       <SiteHeader />

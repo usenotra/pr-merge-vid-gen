@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+/* Two-column, viewport-locked layout only when there is room in both axes */
+@custom-variant wide (@media (min-width: 64rem) and (min-height: 44rem));
 
 @theme inline {
   --font-heading: var(--font-satoshi);

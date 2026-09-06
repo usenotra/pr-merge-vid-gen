@@ -194,7 +194,7 @@ export function MergePreview() {
       : "Enter a repository above to build its PR merge video."
 
   return (
-    <div className="grid h-full min-h-0 min-w-0 grid-cols-1 gap-5 lg:grid-cols-[20rem_minmax(0,1fr)]">
+    <div className="grid h-full min-h-0 min-w-0 grid-cols-1 gap-5 wide:grid-cols-[20rem_minmax(0,1fr)]">
       <aside className="flex min-h-0 min-w-0 flex-col gap-6">
         <div className="flex h-8 shrink-0 items-center justify-between gap-3">
           <p className="font-display text-sm font-semibold tracking-tight">
@@ -248,7 +248,7 @@ export function MergePreview() {
                 <div
                   aria-hidden="true"
                   className={cn(
-                    "flex flex-col gap-1.5 [mask-image:linear-gradient(to_bottom,black_0%,black_25%,transparent_95%)]",
+                    "flex min-h-0 shrink flex-col gap-1.5 overflow-hidden [mask-image:linear-gradient(to_bottom,black_0%,black_25%,transparent_95%)]",
                     isLoading && "motion-safe:animate-pulse"
                   )}
                 >
@@ -271,7 +271,7 @@ export function MergePreview() {
                     </div>
                   ))}
                 </div>
-                <p className="text-center text-xs text-muted-foreground">
+                <p className="shrink-0 text-center text-xs text-muted-foreground">
                   {isLoading
                     ? "Loading contributors…"
                     : "No people to show yet"}
@@ -354,7 +354,7 @@ export function MergePreview() {
         </div>
       </aside>
 
-      <div className="[container-type:size] grid h-[min(42svh,100%)] min-h-0 min-w-0 overflow-hidden lg:h-full">
+      <div className="[container-type:size] grid h-[min(42svh,100%)] min-h-0 min-w-0 overflow-hidden wide:h-full">
         <div
           className="place-self-center overflow-hidden rounded-3xl"
           style={{
@@ -387,7 +387,7 @@ export function MergePreview() {
 
             {!(isLoading || inputProps) ? (
               <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-white p-1.5 shadow-[0_0_0_0.0625rem_#1E1E1E14]">
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-lg p-1.5 dark:bg-white dark:shadow-[0_0_0_0.0625rem_#1E1E1E14]">
                   <NotraMark className="size-9 text-brand-ink" />
                 </span>
                 <p className="max-w-sm text-sm text-pretty text-muted-foreground">
