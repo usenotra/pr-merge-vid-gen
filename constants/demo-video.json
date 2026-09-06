@@ -1,0 +1,19 @@
+{
+  "owner": "usenotra",
+  "repo": "notra",
+  "days": 7,
+  "people": [
+    {
+      "login": "janburzinski",
+      "name": "Jan Burzinski",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/156842394?v=4",
+      "merges": 200
+    },
+    {
+      "login": "mezotv",
+      "name": "Dominik K.",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/68947960?v=4",
+      "merges": 21
+    }
+  ]
+}

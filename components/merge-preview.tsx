@@ -8,7 +8,13 @@ import type {
 import { SKELETON_ROWS } from "@/constants/merge-preview"
 
 import { Player } from "@remotion/player"
-import { CheckIcon, DownloadIcon, LoaderCircleIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  CheckIcon,
+  DownloadIcon,
+  LoaderCircleIcon,
+  PlayIcon,
+} from "lucide-react"
 import { useQueryState } from "nuqs"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -53,6 +59,7 @@ import type {
 import { cn } from "cn"
 
 export function MergePreview() {
+  const [showDemo, setShowDemo] = useState(false)
   const [repoParam] = useQueryState("repo")
   const [days, setDays] = useState<PrMergePeriodDays>(
     DEFAULT_PR_MERGE_PERIOD_DAYS
@@ -342,15 +349,15 @@ export function MergePreview() {
                 ? "Video download ready"
                 : ""}
           </span>
-          <p className="text-center text-xs text-muted-foreground tabular-nums">
-            {inputProps
-              ? selectedMergeCount.toLocaleString("en-US") +
+          {inputProps ? (
+            <p className="text-center text-xs text-muted-foreground tabular-nums">
+              {selectedMergeCount.toLocaleString("en-US") +
                 " merges · " +
                 inputProps.owner +
                 "/" +
-                inputProps.repo
-              : "1080 × 1080 · 16 s · MP4"}
-          </p>
+                inputProps.repo}
+            </p>
+          ) : null}
         </div>
       </aside>
 
@@ -363,11 +370,38 @@ export function MergePreview() {
           }}
         >
           <div className="h-full overflow-hidden rounded-3xl bg-background shadow-[0_0_0_0.0625rem_#1E1E1E1F,0_0.125rem_1.25rem_#1E1E1E0A] dark:shadow-[0_0_0_0.0625rem_#FFFFFF1F]">
-            {isLoading ? (
+            {showDemo ? (
+              <div className="flex h-full flex-col">
+                <div className="flex shrink-0 items-center justify-between gap-2 px-3 pt-3">
+                  <Button
+                    onClick={() => setShowDemo(false)}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <ArrowLeftIcon />
+                    Back
+                  </Button>
+                  <p className="pr-2 text-xs text-muted-foreground">Demo</p>
+                </div>
+                <video
+                  aria-label="Sample leaderboard: Jan with 200 merges and Dominik with 21"
+                  autoPlay={!prefersReducedMotion}
+                  className="min-h-0 w-full flex-1 bg-white object-contain"
+                  controls
+                  loop={!prefersReducedMotion}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  src="/demo/pr-merge-demo.mp4"
+                />
+              </div>
+            ) : null}
+
+            {!showDemo && isLoading ? (
               <Skeleton className="h-full w-full rounded-none" />
             ) : null}
 
-            {!isLoading && inputProps ? (
+            {!showDemo && !isLoading && inputProps ? (
               <Player
                 acknowledgeRemotionLicense
                 autoPlay={!prefersReducedMotion}
@@ -385,7 +419,7 @@ export function MergePreview() {
               />
             ) : null}
 
-            {!(isLoading || inputProps) ? (
+            {!(showDemo || isLoading || inputProps) ? (
               <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
                 <span className="flex size-12 shrink-0 items-center justify-center rounded-lg p-1.5 dark:bg-white dark:shadow-[0_0_0_0.0625rem_#1E1E1E14]">
                   <NotraMark className="size-9 text-brand-ink" />
@@ -393,6 +427,14 @@ export function MergePreview() {
                 <p className="max-w-sm text-sm text-pretty text-muted-foreground">
                   {emptyPreviewMessage}
                 </p>
+                <Button
+                  onClick={() => setShowDemo(true)}
+                  size="sm"
+                  variant="outline"
+                >
+                  <PlayIcon />
+                  Show demo
+                </Button>
               </div>
             ) : null}
           </div>

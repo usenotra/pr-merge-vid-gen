@@ -27,6 +27,15 @@ Set `NEXT_PUBLIC_SITE_URL` to the public origin in production.
 
 ## Browser export
 
+The empty video preview's **Show demo** button plays `public/demo/pr-merge-demo.mp4`
+in place without GitHub access; **Back** restores the preview. It uses fictional
+counts: Jan Burzinski has 200 merges and Dominik K. has 21. Regenerate the
+16-second demo with:
+
+```bash
+bunx remotion render PrMergeVideo public/demo/pr-merge-demo.mp4 --props=constants/demo-video.json
+```
+
 MP4 export runs on the user's device using Remotion Web Renderer (1080 × 1080,
 60 fps, 16 seconds, H.264, no audio). The renderer is loaded only when exporting.
 The app checks codec support and offers progress and cancellation. Keep the tab
