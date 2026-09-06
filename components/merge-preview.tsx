@@ -387,7 +387,9 @@ export function MergePreview() {
 
             {!(isLoading || inputProps) ? (
               <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
-                <NotraMark className="size-9 text-brand-ink" />
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-white p-1.5 shadow-[0_0_0_0.0625rem_#1E1E1E14]">
+                  <NotraMark className="size-9 text-brand-ink" />
+                </span>
                 <p className="max-w-sm text-sm text-pretty text-muted-foreground">
                   {emptyPreviewMessage}
                 </p>
