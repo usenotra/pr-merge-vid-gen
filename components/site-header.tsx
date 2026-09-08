@@ -6,7 +6,7 @@ export function SiteHeader() {
     <header className="flex h-9 shrink-0 items-center justify-between gap-4">
       <a
         className="flex items-center gap-2.5 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        href="https://usenotra.com"
+        href="https://www.usenotra.com"
         rel="noreferrer"
         target="_blank"
       >
