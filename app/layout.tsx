@@ -5,6 +5,7 @@ import { Inter } from "next/font/google"
 import localFont from "next/font/local"
 
 import { Providers } from "@/components/providers"
+import { Databuddy } from "@databuddy/sdk/react"
 import { cn } from "cn"
 
 import "./globals.css"
@@ -44,6 +45,11 @@ export default function RootLayout({ children }: Readonly<ChildrenProps>) {
           Skip to content
         </a>
         <Providers>{children}</Providers>
+        <Databuddy
+          clientId="147f292e-271f-4088-a988-35a8f5e91031"
+          disabled={process.env.NODE_ENV === "development"}
+          trackWebVitals={true}
+        />
       </body>
     </html>
   )
