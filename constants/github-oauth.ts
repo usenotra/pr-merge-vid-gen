@@ -4,6 +4,8 @@ export const TOKEN_URL = "https://github.com/login/oauth/access_token"
 
 export const VIEWER_URL = "https://api.github.com/user"
 
+export const GITHUB_APPS_URL = "https://github.com/apps"
+
 export const IV_LENGTH = 12
 
 export const AUTH_TAG_LENGTH = 16

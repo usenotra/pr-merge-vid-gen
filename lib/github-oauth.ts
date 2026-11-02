@@ -2,6 +2,7 @@ import {
   AUTH_TAG_LENGTH,
   AUTHORIZE_URL,
   CALLBACK_PATH,
+  GITHUB_APPS_URL,
   IV_LENGTH,
   MAX_PENDING_OAUTH_STATES,
   STATE_LENGTH,
@@ -38,6 +39,13 @@ export function getGithubOAuthConfig(): GithubOAuthConfig | null {
     return null
   }
   return { clientId, clientSecret }
+}
+
+export function getGithubAppInstallUrl(): string | null {
+  const slug = process.env.GITHUB_APP_SLUG?.trim()
+  return slug
+    ? `${GITHUB_APPS_URL}/${encodeURIComponent(slug)}/installations/new`
+    : null
 }
 
 export function getGithubCallbackUrl(request: NextRequest): string {

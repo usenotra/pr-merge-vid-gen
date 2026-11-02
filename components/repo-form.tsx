@@ -21,7 +21,8 @@ import { cn } from "cn"
 export function RepoForm() {
   const [repoParam, setRepoParam] = useQueryState("repo")
   const [value, setValue] = useState(repoParam ?? DEFAULT_REPO_INPUT)
-  const { connected, oauthConfigured, loaded, login } = useGithubStatus()
+  const { connected, oauthConfigured, loaded, login, installUrl } =
+    useGithubStatus()
   const isLoading = useRepoLoading()
   const needsConnect = loaded && oauthConfigured && !connected
   const buttonState = isLoading
@@ -128,6 +129,17 @@ export function RepoForm() {
           >
             Disconnect
           </Button>
+          {installUrl ? (
+            <Button
+              className="h-auto px-0 text-xs"
+              nativeButton={false}
+              render={<a href={installUrl} />}
+              size="sm"
+              variant="link"
+            >
+              Add private repos
+            </Button>
+          ) : null}
         </p>
       ) : null}
     </div>

@@ -12,6 +12,7 @@ export interface GithubStatus {
   connected: boolean
   login: string | null
   oauthConfigured: boolean
+  installUrl: string | null
 }
 
 export type GithubStatusLoadState = { loaded: boolean }

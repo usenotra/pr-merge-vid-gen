@@ -2,7 +2,11 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import { GITHUB_CONNECTED_COOKIE } from "@/constants/github-cookies"
-import { getGithubOAuthConfig, readGithubToken } from "@/lib/github-oauth"
+import {
+  getGithubAppInstallUrl,
+  getGithubOAuthConfig,
+  readGithubToken,
+} from "@/lib/github-oauth"
 
 export const runtime = "nodejs"
 
@@ -14,5 +18,6 @@ export function GET(request: NextRequest) {
     connected: Boolean(token),
     login,
     oauthConfigured: Boolean(getGithubOAuthConfig()),
+    installUrl: getGithubAppInstallUrl(),
   })
 }

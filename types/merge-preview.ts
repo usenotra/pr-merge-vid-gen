@@ -4,4 +4,4 @@ export type MergePreviewResult = {
   data: RepoPrMergeData | null
 }
 
-export type RepoErrorResponse = { error?: string }
+export type RepoErrorResponse = { error?: string; installUrl?: string | null }

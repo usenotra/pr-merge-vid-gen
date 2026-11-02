@@ -3,4 +3,5 @@ export const idleStatus: GithubStatus = {
   connected: false,
   login: null,
   oauthConfigured: false,
+  installUrl: null,
 }

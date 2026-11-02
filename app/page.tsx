@@ -26,8 +26,8 @@ export default function HomePage() {
               Who shipped the most pull requests?
             </h1>
             <p className="mx-auto max-w-xl text-center font-sans text-sm leading-relaxed font-medium text-pretty text-brand-ink/75 sm:text-[0.9375rem] dark:text-white/70">
-              Pick a public repo and time range, choose the people, then
-              download a share-ready MP4 leaderboard.
+              Pick a repo and time range, choose the people, then download a
+              share-ready MP4 leaderboard.
             </p>
           </div>
           <Suspense>

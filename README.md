@@ -1,6 +1,6 @@
 # PR merge video
 
-Turn a public GitHub repository's recent pull request merges into an animated leaderboard and a downloadable MP4.
+Turn a GitHub repository's recent pull request merges into an animated leaderboard and a downloadable MP4.
 
 ## Setup
 
@@ -14,7 +14,7 @@ bun dev
 
 Use either:
 
-1. A [GitHub OAuth App](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) with callback `http://localhost:3000/api/github/callback`, then set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+1. A [GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) with callback `http://localhost:3000/api/github/callback`, webhooks off, and only the read-only **Pull requests** repository permission. Set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `GITHUB_APP_SLUG`. Public repos work after login; users install the app on the private repos they want to use.
 2. A personal `GITHUB_TOKEN` for local use when OAuth is not configured.
 
 Set `NEXT_PUBLIC_SITE_URL` to the public origin in production.
@@ -45,10 +45,12 @@ Sandbox or object storage is needed. Remotion Studio remains available locally.
 ## Vercel launch
 
 1. Import the repository with the Next.js preset (`bun run build`).
-2. Set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `NEXT_PUBLIC_SITE_URL`
-   to the production HTTPS origin. Do not set the local `GITHUB_TOKEN` fallback.
-3. Set the GitHub OAuth callback to `https://YOUR_DOMAIN/api/github/callback`.
-   Use a separate OAuth app and stable callback domain for preview testing.
+2. Set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_APP_SLUG`, and
+   `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin. Do not set the local
+   `GITHUB_TOKEN` fallback.
+3. Set the GitHub App callback to `https://YOUR_DOMAIN/api/github/callback` and
+   its setup URL to `https://YOUR_DOMAIN/`. Use a separate GitHub App and stable
+   callback domain for preview testing.
 4. Configure a Vercel Firewall rate-limit rule for `/api/repo` before a public
    launch. The in-process limiter is best-effort only across serverless instances.
 5. Verify login, a six-person export, long names, cancellation and download on

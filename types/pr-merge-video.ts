@@ -51,7 +51,6 @@ export interface GithubPrMergeSearchData {
     name: string
     nameWithOwner: string
     url: string
-    isPrivate: boolean
   } | null
   search: {
     issueCount: number

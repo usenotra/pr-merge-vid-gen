@@ -136,7 +136,19 @@ export function MergePreview() {
           }
           setResult({ key: requestKey, data: null })
           setSelectedLogins([])
-          toast.error(json.error ?? "Could not load that repository.")
+          const { installUrl } = json
+          toast.error(
+            json.error ?? "Could not load that repository.",
+            installUrl
+              ? {
+                  description: "If it's private, give Notra access to it.",
+                  action: {
+                    label: "Add private repos",
+                    onClick: () => window.location.assign(installUrl),
+                  },
+                }
+              : undefined
+          )
         }
       } catch {
         if (!controller.signal.aborted) {

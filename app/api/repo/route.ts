@@ -2,7 +2,11 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import { GITHUB_CONNECTION_REQUIRED_MESSAGE } from "@/constants/github-cookies"
-import { clearGithubCookies, readGithubToken } from "@/lib/github-oauth"
+import {
+  clearGithubCookies,
+  getGithubAppInstallUrl,
+  readGithubToken,
+} from "@/lib/github-oauth"
 import { loadRepoPrMergeData } from "@/lib/load-repo"
 import { isRateLimited } from "@/lib/ratelimit"
 import { prMergeRepoQuerySchema } from "@/schemas/pr-merge-video"
@@ -57,7 +61,10 @@ export async function GET(request: NextRequest) {
       )
     }
     return NextResponse.json(
-      { error: "Repository not found." },
+      {
+        error: "Repository not found.",
+        installUrl: getGithubAppInstallUrl(),
+      },
       { status: 404 }
     )
   }

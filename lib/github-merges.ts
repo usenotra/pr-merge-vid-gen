@@ -162,7 +162,7 @@ export async function fetchRepoPrMergeData(
 
     if (page === 0) {
       repository = data.repository
-      if (!repository || repository.isPrivate) {
+      if (!repository) {
         throw new RepoNotFound(owner, repo)
       }
       issueCount = data.search.issueCount

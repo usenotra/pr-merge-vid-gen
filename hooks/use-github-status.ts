@@ -44,6 +44,7 @@ export function useGithubStatus(): GithubStatus & GithubStatusLoadState {
             connected: cookieLogin !== null,
             login: cookieLogin,
             oauthConfigured: false,
+            installUrl: null,
           })
           setLoaded(true)
         }

@@ -19,7 +19,6 @@ export const PR_MERGE_QUERY = `
       name
       nameWithOwner
       url
-      isPrivate
     }
     search(
       query: $queryString
