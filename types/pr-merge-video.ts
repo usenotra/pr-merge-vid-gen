@@ -65,7 +65,7 @@ export interface GithubPrMergeSearchData {
 
 export interface GithubGraphqlResponse<T> {
   data?: T
-  errors?: Array<{ message: string }>
+  errors?: Array<{ message: string; type?: string }>
 }
 
 export type GithubPrMergePage = {

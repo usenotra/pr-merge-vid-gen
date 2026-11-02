@@ -147,7 +147,11 @@ export async function fetchRepoPrMergeData(
       throw new RepoUnauthorized(owner, repo)
     }
 
-    if (response.payload?.errors?.length) {
+    const errors = response.payload?.errors
+    if (errors?.some((error) => error.type === "NOT_FOUND")) {
+      throw new RepoNotFound(owner, repo)
+    }
+    if (errors?.length) {
       throw new RepoUnavailable(owner, repo)
     }
 
